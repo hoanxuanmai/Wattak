@@ -13,10 +13,27 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/products', function () {
+        return Inertia::render('Product/Index');
+    })->name('products.index');
+
+    Route::get('/products/create', function () {
+        return Inertia::render('Product/Create');
+    })->name('products.create');
+
+    Route::get('/products/{product}/show', function ($product) {
+        return Inertia::render('Product/Create', ['product' => $product]);
+    })->name('products.show');
+
+    Route::get('/products/{product}/edit', function ($product) {
+        return Inertia::render('Product/Create', ['product' => $product]);
+    })->name('products.edit');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -24,4 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+
